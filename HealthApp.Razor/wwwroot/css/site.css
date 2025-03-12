@@ -1,22 +1,90 @@
-html {
-  font-size: 14px;
+@import url('https://fonts.googleapis.com/css2?family=Krona+One&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+  --primary-color: #eaeaea;
+  --secondary-color: #3a3a3a;
+  --disabled-color: #a0a0a0;
+  
+  --primary-background-color: #151515;
+  --secondary-background-color: #272727;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  
+  font-family: 'Noto Sans', sans-serif;
+  color: var(--primary-color);
+  text-decoration: none;
 }
 
 body {
-  margin-bottom: 60px;
+  background-color: var(--primary-background-color);
+}
+
+main {
+    padding: 75px 20px 20px 20px;
+}
+
+.navbar {
+  position: fixed;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: rgba(21, 21, 21, .5);
+  border-bottom: 1px solid var(--secondary-color);
+  backdrop-filter: blur(20px);
+}
+
+.navbar_icon {
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.navbar_element {
+  padding: 5px 10px;
+  color: var(--disabled-color);
+  border-radius: 5px;
+}
+
+.navbar_element:hover {
+  color: var(--primary-color);
+}
+
+.navbar_element.active {
+  color: var(--primary-color);
+}
+
+.login_container {
+  display: flex;
+  gap: 10px;
+}
+
+button {
+  background: var(--primary-background-color);
+  border: 1px solid var(--primary-color);
+  padding: 5px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+input {
+  border:none;
+  font-size: 1rem;
+  background: var(--primary-background-color);
+  border-bottom: 1px solid var(--primary-color);
+  padding: 5px;
+}
+
+input:focus {
+    outline: none;
+    border-bottom: 1px solid var(--secondary-color);
+}
+
+button:hover {
+  background: rgba(234, 234, 234, .25);
 }
