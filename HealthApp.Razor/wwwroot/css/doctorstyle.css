@@ -1,0 +1,33 @@
+.buttons{
+    all: unset;
+    padding: 10px;
+    background-color: cornflowerblue;
+    border-radius: 5px;
+}
+
+#emplacement_buttons{
+    display: flex;
+    vertical-align: middle;
+    justify-content: center;
+}
+
+#table{
+    padding-top: 10px;
+    display: flex;
+    text-align: center;
+    flex-direction: column;
+    vertical-align: middle;
+    justify-content: center;
+    background-color: rgb(181, 180, 180);
+    border-radius: 5px;
+}
+
+#titre_data{
+    border: 5px;
+    border-color: black;
+}
+.data{
+    border-width: 2px;
+    border-color: black;
+
+}

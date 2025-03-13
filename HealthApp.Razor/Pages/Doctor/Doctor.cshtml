@@ -1,0 +1,131 @@
+@page
+@model DoctorModel
+@{
+    ViewData["Title"] = "Calendrier du Médecin";
+
+}
+<link rel="stylesheet" href="/css/doctorstyle.css">
+
+<div>
+    <button class="buttons">Your Schedule</button>
+    <button class="buttons" onclick="createNewDemand()">new Demand</button>
+</div>
+<!-- Conteneur du calendrier -->
+<div id="calendar"></div>
+
+<link href="/css/fullcalendar-custom.css" rel="stylesheet">
+<!-- FullCalendar JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/fullcalendar/index.global.min.js"></script>
+
+
+<link href="/css/fullcalendar-custom.css" rel="stylesheet">
+<!-- FullCalendar JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/fullcalendar/index.global.min.js"></script>
+
+
+
+<script>
+     function createNewDemand() {
+        window.location.href = "Demands"; // Adjust as needed
+    }
+
+    $(document).ready(function () {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'fr',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            events: '/Calendrier/GetEvents', // Charge les événements existants
+            selectable: true, // Permet de cliquer sur une date
+            dateClick: function (info) {
+                $("#eventStart").val(info.dateStr + "T08:00");
+                $("#eventEnd").val(info.dateStr + "T09:00");
+                $("#eventModal").show();
+            }
+        });
+
+        calendar.render();
+
+        // Bouton "Ajouter"
+        $("#saveEvent").click(function () {
+            var title = $("#eventTitle").val().trim();
+            var start = $("#eventStart").val();
+            var end = $("#eventEnd").val();
+
+            if (title === "") {
+                alert("Le titre est obligatoire.");
+                return;
+            }
+
+            var newEvent = {
+                Title: title,
+                Start: start,
+                End: end
+            };
+
+            console.log("📤 Données envoyées à l'API :", newEvent);
+
+            $.ajax({
+                url: '/Calendrier/AddEvent',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(newEvent),
+                success: function (response) {
+                    console.log("✅ Réponse de l'API :", response);
+
+                    if (response && response.status === "success" && response.eventData) {
+                        console.log("🎉 Événement ajouté :", response.eventData);
+
+                        // Ajouter l'événement dans FullCalendar
+                        calendar.addEvent({
+                            id: response.eventData.id,
+                            title: response.eventData.title,
+                            start: response.eventData.start,
+                            end: response.eventData.end,
+                            color: response.eventData.color
+                        });
+
+                        $("#eventModal").hide();
+                        $("#eventTitle").val('');
+                        $("#eventStart").val('');
+                        $("#eventEnd").val('');
+                    } else {
+                        console.error("❌ Erreur : Réponse invalide de l'API", response);
+                        alert("Erreur lors de l'ajout de l'événement.");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("❌ Erreur AJAX :", xhr.responseText);
+                    alert("Erreur lors de la requête.");
+                }
+            });
+        });
+
+        // Bouton "Fermer" du formulaire
+        $("#closeModal").click(function () {
+            $("#eventModal").hide();
+        });
+    });
+
+
+</script>
+
+<!-- Formulaire pour ajouter un événement -->
+<div id="eventModal" style="display:none; position:fixed; top:30%; left:40%; background:white; padding:20px; border-radius:10px; box-shadow:0 0 10px gray;">
+    <h3>Ajouter un événement</h3>
+    <label for="eventTitle">Titre:</label>
+    <input type="text" id="eventTitle" class="form-control"><br>
+    
+    <label for="eventStart">Date:</label>
+    <input type="datetime-local" id="eventStart" class="form-control"><br>
+    
+    <button id="saveEvent" class="btn btn-success">Ajouter</button>
+    <button id="closeModal" class="btn btn-danger">Annuler</button>
+</div>
+

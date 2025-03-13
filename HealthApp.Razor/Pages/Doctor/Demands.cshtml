@@ -1,0 +1,59 @@
+@page
+@model DemandsModel
+@{
+    ViewData["Title"] = "Calendrier du Médecin";
+}
+
+<!-- Corrected CSS link -->
+<link rel="stylesheet" href="/css/doctorstyle.css">
+
+<div id="emplacement_buttons">
+    <button class="buttons" onclick="calendar()">Your Schedule</button>
+    <button class="buttons" onclick="createNewDemand()">New Demand</button>
+</div>
+
+<!-- Conteneur du calendrier -->
+<div id="calendar"></div>
+
+<div id="table">
+    <p>New Demands here!</p>
+    <table>
+        <thead id="titre_data">
+            <tr>
+                <th class="data">ID</th>
+                <th class="data">Patient</th>
+                <th class="data">Date</th>
+                <th class="data">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data will be dynamically inserted -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function createNewDemand() {
+        window.location.href = "Demands"; // Adjust as needed
+    }
+    function calendar() {
+        window.location.href = "Doctor"; // Adjust as needed
+    }
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var tableBody = document.querySelector("table tbody");
+
+        function checkTableData() {
+            if (tableBody.children.length === 0) {
+                var noDataRow = document.createElement("tr");
+                noDataRow.innerHTML = `<td colspan="4" style="text-align:center; color:gray;">No demand here!</td>`;
+                tableBody.appendChild(noDataRow);
+            }
+        }
+
+        // Vérifier initialement si la table est vide
+        checkTableData();
+    });
+</script>
