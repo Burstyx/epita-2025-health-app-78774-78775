@@ -25,8 +25,8 @@ public class PatientBookModel : PageModel
 
     public void OnGet()
     {
-        Doctors = _context.Users.Where(u => _context.UserRoles.Any(ur => ur.UserId == u.Id && ur.RoleId == "987094ad-cd8e-40f5-9f44-cf1088065b2a")).ToList();
-        if(DoctorId == null) DoctorId = Doctors.FirstOrDefault().Id;
+        Doctors = _context.Users.Where(u => _context.UserRoles.Any(ur => ur.UserId == u.Id && ur.RoleId == "1")).ToList();
+        if(DoctorId == null) DoctorId = Doctors.FirstOrDefault()?.Id ?? "";
         ReservedAppointments = _context.Appointments.Where(a => a.DoctorId == DoctorId).ToList();
         
         DoctorList = Doctors.Select(d => new SelectListItem
