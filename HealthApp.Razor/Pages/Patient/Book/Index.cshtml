@@ -5,4 +5,34 @@
 }
 <h1>@ViewData["Title"]</h1>
 
-<p>Book appointment</p>
+<form method="post">
+    <div class="form-group">
+        <label class="primary" for="DoctorId">Doctor</label>
+        <select class="form-control" id="DoctorId" onchange="document.getElementById('selectedDoctor').value = this.value" asp-items="@Model.DoctorList"></select>
+    </div>
+    <div class="form-group">
+        <label class="primary" for="Date">Date</label>
+        <div id="Date" class="btn-group" role="group">
+            @for (var i = 0; i < 7; i++)
+            {
+                <div class="date-container">
+                    <p>@DateTime.Now.AddDays(i).ToString("dd MMMM yyyy")</p>
+                    <div class="time-container">
+                        @for (var hour = 8; hour <= 17; hour++)
+                        {
+                            <button type="submit" class="btn btn-outline-primary" onclick="selectDateTime('@DateOnly.FromDateTime(DateTime.Now.AddDays(i))', '@hour:00')">@hour:00</button>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+        <input type="hidden" id="selectedDate" name="selectedDate" />
+        <input type="hidden" id="selectedTime" name="selectedTime" />
+        <input type="hidden" id="selectedDoctor" name="selectedDoctor" value="@Model.DoctorList.FirstOrDefault()?.Value" /></div>
+</form>
+<script>
+    function selectDateTime(date, time) {
+        document.getElementById('selectedDate').value = date;
+        document.getElementById('selectedTime').value = time;
+    }
+</script>

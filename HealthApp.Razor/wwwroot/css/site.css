@@ -24,11 +24,29 @@ body {
 }
 
 main {
-    padding: 75px 20px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 100px 20px 20px 20px;
+}
+
+main > div {
+  width: 100%;
+}
+
+h1 {
+  display: none;
+}
+
+.row, .col {
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .navbar {
   position: fixed;
+  z-index: 99;
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -47,6 +65,7 @@ main {
 .navbar_element {
   padding: 5px 10px;
   color: var(--disabled-color);
+  text-decoration: none;
   border-radius: 5px;
 }
 
@@ -80,6 +99,18 @@ input {
   padding: 5px;
 }
 
+label {
+  color: var(--primary-background-color);
+}
+
+label.primary {
+  color: var(--primary-color);
+}
+
+option {
+  color: var(--primary-background-color);
+}
+
 input:focus {
     outline: none;
     border-bottom: 1px solid var(--secondary-color);
@@ -87,4 +118,27 @@ input:focus {
 
 button:hover {
   background: rgba(234, 234, 234, .25);
+}
+
+div.checkbox label {
+  color: var(--primary-color)
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.date-container {
+  background: var(--secondary-background-color);
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid var(--secondary-color);
 }
