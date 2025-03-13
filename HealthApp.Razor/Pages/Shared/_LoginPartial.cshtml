@@ -5,7 +5,7 @@
     {
         <a class="navbar_element" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@User.Identity?.Name</a>
         <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })">
-            <button type="submit">Logout</button>
+            <button class="btn btn-primary" type="submit">Logout</button>
         </form>
     }
     else

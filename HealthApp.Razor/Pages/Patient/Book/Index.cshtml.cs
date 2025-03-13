@@ -12,7 +12,8 @@ public class PatientBookModel : PageModel
 {
     private readonly ApplicationDbContext _context;
     private List<IdentityUser> Doctors { get; set; }
-
+    
+    public List<Appointment> AllReservedAppointments { get; set; }
     public Appointment Appointment { get; set; }
     public List<SelectListItem> DoctorList { get; set; }
 
@@ -24,6 +25,8 @@ public class PatientBookModel : PageModel
     public void OnGet()
     {
         Doctors = _context.Users.Where(u => _context.UserRoles.Any(ur => ur.UserId == u.Id && ur.RoleId == "987094ad-cd8e-40f5-9f44-cf1088065b2a")).ToList();
+        AllReservedAppointments = _context.Appointments.ToList();
+        
         DoctorList = Doctors.Select(d => new SelectListItem
         {
             Value = d.Id.ToString(),
@@ -36,9 +39,6 @@ public class PatientBookModel : PageModel
         string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userId == null)
             return RedirectToPage("/Identity/Account/Login", new { area = "Identity" });
-        
-        Console.WriteLine(selectedDoctor);
-        Console.WriteLine("dfdsf");
         
         Appointment = new Appointment
         {

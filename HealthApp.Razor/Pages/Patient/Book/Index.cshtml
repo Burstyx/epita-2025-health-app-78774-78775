@@ -1,17 +1,15 @@
 ﻿@page
 @model PatientBookModel
 @{
-    ViewData["Title"] = "Patient Appointments";
+    ViewData["Title"] = "Book an appointment";
 }
 <h1>@ViewData["Title"]</h1>
 
 <form method="post">
     <div class="form-group">
-        <label class="primary" for="DoctorId">Doctor</label>
         <select class="form-control" id="DoctorId" onchange="document.getElementById('selectedDoctor').value = this.value" asp-items="@Model.DoctorList"></select>
     </div>
     <div class="form-group">
-        <label class="primary" for="Date">Date</label>
         <div id="Date" class="btn-group" role="group">
             @for (var i = 0; i < 7; i++)
             {
@@ -20,15 +18,24 @@
                     <div class="time-container">
                         @for (var hour = 8; hour <= 17; hour++)
                         {
-                            <button type="submit" class="btn btn-outline-primary" onclick="selectDateTime('@DateOnly.FromDateTime(DateTime.Now.AddDays(i))', '@hour:00')">@hour:00</button>
+                            var date = DateTime.Now.AddDays(i);
+                            var dateTime = new DateTime(date.Year, date.Month, date.Day, hour, 0, 0);
+                            if (Model.AllReservedAppointments.All(a => a.DateTimeMilli != new DateTimeOffset(dateTime).ToUnixTimeMilliseconds()))
+                            {
+                                <button type="submit" class="btn btn-outline-primary" onclick="selectDateTime('@DateOnly.FromDateTime(date)', '@hour:00')">@hour:00</button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-outline-secondary" disabled>@hour:00</button>
+                            }
                         }
                     </div>
                 </div>
             }
         </div>
-        <input type="hidden" id="selectedDate" name="selectedDate" />
-        <input type="hidden" id="selectedTime" name="selectedTime" />
-        <input type="hidden" id="selectedDoctor" name="selectedDoctor" value="@Model.DoctorList.FirstOrDefault()?.Value" /></div>
+        <input type="hidden" id="selectedDate" name="selectedDate"/>
+        <input type="hidden" id="selectedTime" name="selectedTime"/>
+        <input type="hidden" id="selectedDoctor" name="selectedDoctor" value="@Model.DoctorList.FirstOrDefault()?.Value"/></div>
 </form>
 <script>
     function selectDateTime(date, time) {

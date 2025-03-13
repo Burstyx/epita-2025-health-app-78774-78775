@@ -1,8 +1,23 @@
 ﻿@page
+@using System.Globalization
 @model PatientModel
 @{
     ViewData["Title"] = "Patient Appointments";
 }
 <h1>@ViewData["Title"]</h1>
 
-<p>Patient appointments here.</p>
+<div class="appointments">
+    @foreach (var appointment in Model.ReservedAppointments)
+    {
+        <div class="appointment">
+            <div class="appointment-name">
+                <p class="appointment_date">@DateTimeOffset.FromUnixTimeMilliseconds(appointment.DateTimeMilli).ToString("dd/MM/yyyy HH:mm")</p>
+                <p class="appointment_doctor">with <span>@Model.GetDoctorName(appointment.DoctorId)</span></p>
+            </div>
+            <form method="post" asp-page-handler="CancelAppointment" asp-route-appointmentId="@appointment.Id">
+                <button class="btn btn-danger" type="submit">Cancel</button>
+                <input type="hidden" name="selectedAppointmentId" value="@appointment.Id" />
+            </form>
+        </div>
+    }
+</div>
