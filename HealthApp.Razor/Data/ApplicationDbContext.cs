@@ -5,9 +5,8 @@ namespace HealthApp.Razor.Data;
 
 public class ApplicationDbContext : IdentityDbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options)
-    {
-    }
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+    
+    public DbSet<Appointment> Appointments { get; set; }
     public DbSet<Event> Events { get; set; }
 }

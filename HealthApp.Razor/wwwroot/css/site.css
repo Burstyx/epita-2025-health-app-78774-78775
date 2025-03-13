@@ -1,23 +1,174 @@
-html {
-  font-size: 14px;
+@import url('https://fonts.googleapis.com/css2?family=Krona+One&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+  --primary-color: #eaeaea;
+  --secondary-color: #3a3a3a;
+  --disabled-color: #a0a0a0;
+  
+  --primary-background-color: #151515;
+  --secondary-background-color: #272727;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  
+  font-family: 'Noto Sans', sans-serif;
+  color: var(--primary-color);
+  text-decoration: none;
 }
 
 body {
-  margin-bottom: 60px;
+  background-color: var(--primary-background-color);
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 100px 20px 20px 20px;
+}
+
+main > div {
+  width: 100%;
+}
+
+.row, .col {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.navbar {
+  position: fixed;
+  z-index: 99;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: rgba(21, 21, 21, .5);
+  border-bottom: 1px solid var(--secondary-color);
+  backdrop-filter: blur(20px);
+}
+
+h1 {
+  background: var(--secondary-background-color);
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: 1px solid var(--secondary-color);
+}
+
+.navbar_icon {
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.navbar_element {
+  padding: 5px 10px;
+  color: var(--disabled-color);
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.navbar_element:hover {
+  color: var(--primary-color);
+}
+
+.navbar_element.active {
+  color: var(--primary-color);
+}
+
+.login_container {
+  display: flex;
+  gap: 10px;
+}
+
+input {
+  border:none;
+  font-size: 1rem;
+  background: var(--primary-background-color);
+  border-bottom: 1px solid var(--primary-color);
+  padding: 5px;
+}
+
+label {
+  color: var(--primary-background-color);
+}
+
+label.primary {
+  color: var(--primary-color);
+}
+
+option {
+  color: var(--primary-background-color);
+}
+
+input:focus {
+    outline: none;
+    border-bottom: 1px solid var(--secondary-color);
+}
+
+button:hover {
+  background: rgba(234, 234, 234, .25);
+}
+
+div.checkbox label {
+  color: var(--primary-color)
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.date-container {
+  background: var(--secondary-background-color);
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid var(--secondary-color);
+}
+
+.appointments {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+}
+
+.appointment {
+  display: flex;
+  justify-content: space-between;
+  background: var(--secondary-background-color);
+  padding: 10px;
+  width: 650px;
+  border-radius: 5px;
+  border: 1px solid var(--secondary-color);
+}
+
+.appointment-name {
+  display: flex;
+  flex-direction: column;
+}
+
+.appointment-name p:nth-child(2) {
+  font-size: 12px;
+}
+
+.appointment-name span {
+  font-weight: 800;
+}
+
+.appointment-name p {
+  margin-bottom: 0;
 }
 

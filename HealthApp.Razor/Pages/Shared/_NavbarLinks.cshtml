@@ -1,0 +1,21 @@
+﻿@inject SignInManager<IdentityUser> SignInManager
+
+<div class="navbar_links">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        @if (User.IsInRole("Patient"))
+        {
+            <a class="navbar_element" asp-area="" asp-page="/Patient/Index">Appointments</a>
+            <a class="navbar_element" asp-area="" asp-page="/Patient/Book/Index">Book an appointment</a>
+        }
+        else if (User.IsInRole("Doctor"))
+        {
+            <a class="navbar_element" asp-area="" asp-page="/Doctor">Schedule</a>
+        }
+        else if (User.IsInRole("Admin"))
+        {
+            <a class="navbar_element" asp-area="" asp-page="/Admin">Users</a>
+            <a class="navbar_element" asp-area="" asp-page="/Admin/Appointments">Appointments</a>
+        }
+    }
+</div>
