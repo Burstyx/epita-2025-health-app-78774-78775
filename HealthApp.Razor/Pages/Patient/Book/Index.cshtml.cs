@@ -12,8 +12,9 @@ public class PatientBookModel : PageModel
 {
     private readonly ApplicationDbContext _context;
     private List<IdentityUser> Doctors { get; set; }
-    
-    public List<Appointment> AllReservedAppointments { get; set; }
+
+    [BindProperty(SupportsGet = true)] public string? DoctorId { get; set; }
+    public List<Appointment> ReservedAppointments { get; set; }
     public Appointment Appointment { get; set; }
     public List<SelectListItem> DoctorList { get; set; }
 
@@ -25,12 +26,14 @@ public class PatientBookModel : PageModel
     public void OnGet()
     {
         Doctors = _context.Users.Where(u => _context.UserRoles.Any(ur => ur.UserId == u.Id && ur.RoleId == "987094ad-cd8e-40f5-9f44-cf1088065b2a")).ToList();
-        AllReservedAppointments = _context.Appointments.ToList();
+        if(DoctorId == null) DoctorId = Doctors.FirstOrDefault().Id;
+        ReservedAppointments = _context.Appointments.Where(a => a.DoctorId == DoctorId).ToList();
         
         DoctorList = Doctors.Select(d => new SelectListItem
         {
             Value = d.Id.ToString(),
-            Text = d.UserName
+            Text = d.UserName,
+            Selected = DoctorId == d.Id.ToString()
         }).ToList();
     }
 
@@ -52,5 +55,11 @@ public class PatientBookModel : PageModel
         _context.SaveChanges();
 
         return RedirectToPage("/Patient/Index");
+    }
+    
+    public IActionResult OnGetUpdateAppointments(string doctorId)
+    {
+        ReservedAppointments = _context.Appointments.Where(a => a.DoctorId == doctorId).ToList();
+        return new JsonResult(ReservedAppointments);
     }
 }

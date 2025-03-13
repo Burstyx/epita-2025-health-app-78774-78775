@@ -2,22 +2,29 @@
 @using System.Globalization
 @model PatientModel
 @{
-    ViewData["Title"] = "Patient Appointments";
+    ViewData["Title"] = "Your appointments";
 }
 <h1>@ViewData["Title"]</h1>
 
 <div class="appointments">
-    @foreach (var appointment in Model.ReservedAppointments)
+    @if (Model.ReservedAppointments.Count == 0)
     {
-        <div class="appointment">
-            <div class="appointment-name">
-                <p class="appointment_date">@DateTimeOffset.FromUnixTimeMilliseconds(appointment.DateTimeMilli).ToString("dd/MM/yyyy HH:mm")</p>
-                <p class="appointment_doctor">with <span>@Model.GetDoctorName(appointment.DoctorId)</span></p>
+        <p>You don't have any appointments yet.</p>
+    }
+    else
+    {
+        @foreach (var appointment in Model.ReservedAppointments)
+        {
+            <div class="appointment">
+                <div class="appointment-name">
+                    <p class="appointment_date">@DateTimeOffset.FromUnixTimeMilliseconds(appointment.DateTimeMilli).ToString("dd/MM/yyyy HH:mm")</p>
+                    <p class="appointment_doctor">with <span>@Model.GetDoctorName(appointment.DoctorId)</span></p>
+                </div>
+                <form method="post" asp-page-handler="CancelAppointment" asp-route-appointmentId="@appointment.Id">
+                    <button class="btn btn-danger" type="submit">Cancel</button>
+                    <input type="hidden" name="selectedAppointmentId" value="@appointment.Id" />
+                </form>
             </div>
-            <form method="post" asp-page-handler="CancelAppointment" asp-route-appointmentId="@appointment.Id">
-                <button class="btn btn-danger" type="submit">Cancel</button>
-                <input type="hidden" name="selectedAppointmentId" value="@appointment.Id" />
-            </form>
-        </div>
+        }
     }
 </div>

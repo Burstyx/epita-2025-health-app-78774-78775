@@ -7,7 +7,7 @@
 
 <form method="post">
     <div class="form-group">
-        <select class="form-control" id="DoctorId" onchange="document.getElementById('selectedDoctor').value = this.value" asp-items="@Model.DoctorList"></select>
+        <select class="form-control" id="DoctorId" onchange="document.getElementById('selectedDoctor').value = this.value; updateAppointments(this.value);" asp-items="@Model.DoctorList" ></select>
     </div>
     <div class="form-group">
         <div id="Date" class="btn-group" role="group">
@@ -20,7 +20,7 @@
                         {
                             var date = DateTime.Now.AddDays(i);
                             var dateTime = new DateTime(date.Year, date.Month, date.Day, hour, 0, 0);
-                            if (Model.AllReservedAppointments.All(a => a.DateTimeMilli != new DateTimeOffset(dateTime).ToUnixTimeMilliseconds()))
+                            if (Model.ReservedAppointments.All(a => a.DateTimeMilli != new DateTimeOffset(dateTime).ToUnixTimeMilliseconds()))
                             {
                                 <button type="submit" class="btn btn-outline-primary" onclick="selectDateTime('@DateOnly.FromDateTime(date)', '@hour:00')">@hour:00</button>
                             }
@@ -35,11 +35,16 @@
         </div>
         <input type="hidden" id="selectedDate" name="selectedDate"/>
         <input type="hidden" id="selectedTime" name="selectedTime"/>
-        <input type="hidden" id="selectedDoctor" name="selectedDoctor" value="@Model.DoctorList.FirstOrDefault()?.Value"/></div>
+        <input type="hidden" id="selectedDoctor" name="selectedDoctor" value="@Model.DoctorId"/></div>
 </form>
 <script>
     function selectDateTime(date, time) {
         document.getElementById('selectedDate').value = date;
         document.getElementById('selectedTime').value = time;
+    }
+
+    function updateAppointments(doctorId) {
+        fetch(`/Patient/Book/UpdateAppointments?doctorId=${doctorId}`)
+            .then(_ => location.href = `/Patient/Book?doctorId=${doctorId}`);
     }
 </script>
