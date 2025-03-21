@@ -36,24 +36,46 @@ namespace HealthApp.Razor.Pages.Patient.Book
             LoadData();
         }
 
+
+
         public IActionResult OnPost()
         {
             if (DaysToShow < 7) DaysToShow = 7;
             LoadData();
 
-    public IActionResult OnPost(string selectedDate, string selectedTime, string selectedDoctor)
-    {
-        string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userId == null)
-            return RedirectToPage("/Identity/Account/Login", new { area = "Identity" });
-        
-        Appointment = new Appointment
-        {
-            IsConfirmed = false,
-            UserId = userId,
-            DoctorId = selectedDoctor,
-            DateTimeMilli = new DateTimeOffset(DateTime.ParseExact($"{selectedDate} {selectedTime}", "dd/MM/yyyy H:mm", CultureInfo.InvariantCulture, DateTimeStyles.None)).ToUnixTimeMilliseconds(),
-        };
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                return RedirectToPage("/Identity/Account/Login", new { area = "Identity" });
+
+            if (string.IsNullOrWhiteSpace(selectedDate) || string.IsNullOrWhiteSpace(selectedTime))
+            {
+                ModelState.AddModelError(string.Empty, "Date and time must be provided.");
+                return Page();
+            }
+
+            if (!DateTime.TryParseExact($"{selectedDate} {selectedTime}", "yyyy-MM-dd H:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateTime))
+            {
+                ModelState.AddModelError(string.Empty, "Invalid date or time format.");
+                return Page();
+            }
+
+            var dateTimeMilli = new DateTimeOffset(dateTime).ToUnixTimeMilliseconds();
+            var isAlreadyBooked = _context.Appointments
+                .Any(a => a.DoctorId == selectedDoctor && a.DateTimeMilli == dateTimeMilli && a.IsConfirmed != -1);
+
+            if (isAlreadyBooked)
+            {
+                ModelState.AddModelError(string.Empty, "This appointment slot is already booked.");
+                return Page();
+            }
+
+            Appointment = new Appointment
+            {
+                IsConfirmed = 0,
+                UserId = userId,
+                DoctorId = selectedDoctor,
+                DateTimeMilli = dateTimeMilli
+            };
 
             _context.Appointments.Add(Appointment);
             _context.SaveChanges();
