@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using HealthApp.Razor.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+// Ajouter le service Identity avec UserManager et RoleManager
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
@@ -17,6 +18,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -34,6 +36,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.MapControllers();
 
 app.UseAuthorization();
 

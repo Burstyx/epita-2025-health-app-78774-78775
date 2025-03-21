@@ -8,15 +8,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Update="app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true"/>
+        <None Update="app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.13"/>
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.13"/>
-        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.13"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.13"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.13"/>
+        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.13" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.13" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.13" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.13" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.13" />
     </ItemGroup>
 
     <ItemGroup>
@@ -65,6 +65,10 @@
       <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\js\bootstrap.min.js" />
       <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map" />
       <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\LICENSE" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="wwwroot\css\schedule.css" />
     </ItemGroup>
 
 </Project>

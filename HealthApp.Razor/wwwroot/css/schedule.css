@@ -1,0 +1,144 @@
+﻿body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+.calendar {
+    width: 80%;
+    margin: auto;
+}
+
+.month-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+    .month-nav button {
+        padding: 5px 8px;
+        background-color: none;
+    }
+
+.calendar-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .calendar-table th,
+    .calendar-table td {
+        width: 14.2%;
+        
+        border: 1px solid #ffffff20;
+        vertical-align: top;
+        position: relative;
+        padding: 5px;
+    }
+
+    .calendar-table th {
+        background-color: #f4f4f4;
+    }
+
+    .calendar-table td {
+        height: 100px;
+        vertical-align: top;
+        position: relative;
+    }
+
+/* Style des cellules du calendrier */
+td {
+    width: 14.2%;
+    height: 100px; /* Hauteur fixe pour éviter la déformation */
+    vertical-align: top;
+    position: relative;
+}
+
+/* Conteneur des événements pour éviter la déformation */
+.event-container {
+    
+    max-width: 150px;
+    overflow-y: auto; /* Ajoute un scroll si nécessaire */
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 2px;
+    text-align: center;
+}
+
+/* Style des événements */
+.event {
+    background-color: #ffcc00;
+    color: black;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 5px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 100%; /* Empêche les événements de déborder */
+    cursor: pointer;
+}
+
+/* Contenu du jour */
+.cell-content {
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.days{
+    color: black
+}
+
+/* ✅ Style de la pop-up */
+.modal {
+    display: none; /* Cachée par défaut */
+    position: fixed;
+    z-index: 1000;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 320px; /* 📌 Réduction de la largeur */
+    height: auto;
+    background-color: none;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+}
+
+/* ✅ Style du contenu de la pop-up */
+.modal-content {
+    color: black; /* 📌 Force la couleur du texte en noir */
+    font-size: 14px;
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+}
+    /* ✅ Style du texte spécifique dans la pop-up */
+    .modal-content h2,
+    .modal-content p,
+    .modal-content span,
+    .modal-content strong {
+        color: black; /* 📌 Tous les textes en noir */
+    }
+
+.info{
+    color: black
+}
+/* ✅ Bouton de fermeture */
+.close {
+    background-color: red;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    color: white;
+}
+
+
+/* ✅ Surlignage de la date actuelle */
+.today {
+    background-color: rgba(255, 255, 255, 0.2) ; /* ✅ Fond plus clair */
+    border: 2px solid #ffffff; /* ✅ Bordure blanche */
+    
+}
+

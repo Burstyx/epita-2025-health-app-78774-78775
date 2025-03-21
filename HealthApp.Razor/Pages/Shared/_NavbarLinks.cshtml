@@ -10,7 +10,8 @@
         }
         else if (User.IsInRole("Doctor"))
         {
-            <a class="navbar_element" asp-area="" asp-page="/Doctor">Schedule</a>
+            <a class="navbar_element" asp-area="" asp-page="/Doctor/Schedule">Schedule</a>
+            <a class="navbar_element" asp-area="" asp-page="/Doctor/Confirmation">Notification</a>
         }
         else if (User.IsInRole("Admin"))
         {

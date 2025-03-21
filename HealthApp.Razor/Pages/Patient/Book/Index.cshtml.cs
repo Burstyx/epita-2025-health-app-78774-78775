@@ -25,7 +25,7 @@ public class PatientBookModel : PageModel
 
     public void OnGet()
     {
-        Doctors = _context.Users.Where(u => _context.UserRoles.Any(ur => ur.UserId == u.Id && ur.RoleId == "1")).ToList();
+        Doctors = _context.Users.Where(u => _context.UserRoles.Any(ur => ur.UserId == u.Id && ur.RoleId == "2")).ToList();
         if(DoctorId == null) DoctorId = Doctors.FirstOrDefault()?.Id ?? "";
         ReservedAppointments = _context.Appointments.Where(a => a.DoctorId == DoctorId).ToList();
         
@@ -45,7 +45,7 @@ public class PatientBookModel : PageModel
         
         Appointment = new Appointment
         {
-            IsConfirmed = false,
+            IsConfirmed = 0,
             UserId = userId,
             DoctorId = selectedDoctor,
             DateTimeMilli = new DateTimeOffset(DateTime.ParseExact($"{selectedDate} {selectedTime}", "dd/MM/yyyy H:mm", CultureInfo.InvariantCulture, DateTimeStyles.None)).ToUnixTimeMilliseconds(),

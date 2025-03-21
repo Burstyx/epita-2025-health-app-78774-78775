@@ -1,0 +1,182 @@
+﻿@page
+@using System.Globalization
+@using System.Text.Json
+@model HealthApp.Razor.Pages.Doctor.scheduleModel
+@{
+	ViewData["Title"] = "Your schedule";
+}
+<link rel="stylesheet" href="~/css/schedule.css">
+
+    <h1>Schedule</h1>
+    <div class="calendar">
+        <div class="month-nav">
+            <button class="btn btn-primary" onclick="prevMonth()">◀ Previous Month</button>
+            <h2 id="month-year"></h2>
+        <button class="btn btn-primary"  onclick="nextMonth()">Next Month ▶</button>
+        </div>
+        <table class="calendar-table">
+            <thead>
+                <tr>
+                <th class="days">Sun</th>
+                <th class="days">Mon</th>
+                <th class="days">Thu</th>
+                <th class="days">Wed</th>
+                <th class="days">Tur</th>
+                <th class="days">Fri</th>
+                <th class="days">Sat</th>
+                </tr>
+            </thead>
+            <tbody id="calendar-body"></tbody>
+        </table>
+    </div>
+
+<div id="eventModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Appointment details</h2>
+        <p><strong>Date :</strong> <span id="eventDate"></span></p>
+        <p ><strong>Hour :</strong> <span id="eventTime"></span></p>
+        <p ><strong>Patient :</strong> <span id="eventPatient"></span></p>
+        <p ><strong>Status :</strong> <span id="eventStatus"></span></p>
+    </div>
+</div>
+
+<script>
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
+
+    // 🎯 Injecter les événements directement depuis le backend
+    let events = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Events));
+    
+
+    function generateCalendar(month, year) {
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const calendarBody = document.getElementById("calendar-body");
+        document.getElementById("month-year").textContent = new Date(year, month).toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+
+        calendarBody.innerHTML = "";
+        let date = 1;
+
+        let today = new Date();
+        let todayFormatted = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+        for (let i = 0; i < 6; i++) {
+            let row = document.createElement("tr");
+
+            for (let j = 0; j < 7; j++) {
+                let cell = document.createElement("td");
+
+                if (i === 0 && j < firstDay) {
+                    cell.innerHTML = "";
+                    cell.classList.add("empty-cell"); // ✅ Stylisation des cases vides
+                } else if (date > daysInMonth) {
+                    break;
+                } else {
+                    let formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+
+                    let cellContent = document.createElement("div");
+                    cellContent.classList.add("cell-content");
+                    cellContent.innerHTML = `<strong>${date}</strong>`;
+
+                    let eventContainer = document.createElement("div");
+                    eventContainer.classList.add("event-container");
+
+                    cell.dataset.date = formattedDate;
+                    cell.appendChild(cellContent);
+                    cell.appendChild(eventContainer);
+
+                    // ✅ Ajout de la classe `.today` si c'est la date actuelle
+                    if (formattedDate === todayFormatted) {
+                        cell.classList.add("today");
+                    }
+
+                    date++;
+                }
+
+                row.appendChild(cell);
+            }
+            calendarBody.appendChild(row);
+        }
+        loadEvents();
+    }
+
+    function loadEvents() {
+        console.log("📅 Événements chargés depuis le serveur :", events);
+        
+
+        events.forEach(event => {
+            if (event.IsConfirmed === -1) {
+                return; // 🚀 Ne pas afficher les événements annulés
+            }
+
+            let date = event.start.split("T")[0];
+            let cell = document.querySelector(`[data-date='${date}']`);
+            if (cell) {
+                let eventContainer = cell.querySelector(".event-container");
+
+                if (!eventContainer.querySelector(`[data-event-id="${event.id}"]`)) {
+                    let eventDiv = document.createElement("div");
+                    eventDiv.classList.add("event");
+                    eventDiv.textContent = event.title;
+                    eventDiv.style.backgroundColor = event.color;
+                    eventDiv.dataset.eventId = event.id;
+                    eventDiv.dataset.eventDate = date;
+                    eventDiv.dataset.eventTime = event.start.split("T")[1]; // Extraire l'heure
+                    eventDiv.dataset.eventPatient = event.title;
+                    
+                    eventDiv.dataset.eventStatus = event.IsConfirmed == 1 ? "Confirmed" : event.IsConfirmed == -1 ? "Refused" : "Pending";
+
+                    // ✅ Ajouter un événement "click" pour ouvrir la pop-up
+                    eventDiv.onclick = function () {
+
+                        openModal(this.dataset);
+                    };
+
+                    eventContainer.appendChild(eventDiv);
+                }
+            }
+        });
+    }
+
+    // ✅ Fonction pour ouvrir la pop-up avec les détails du rendez-vous
+    function openModal(eventData) {
+        document.getElementById("eventDate").textContent = eventData.eventDate;
+        document.getElementById("eventTime").textContent = eventData.eventTime;
+        document.getElementById("eventPatient").textContent = eventData.eventPatient;
+        document.getElementById("eventStatus").textContent = eventData.eventStatus;
+        document.getElementById("eventModal").style.display = "block";
+    }
+
+    // ✅ Fonction pour fermer la pop-up
+    function closeModal() {
+        document.getElementById("eventModal").style.display = "none";
+    }
+    function prevMonth() {
+        currentMonth--;
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        }
+        generateCalendar(currentMonth, currentYear);
+    }
+
+    function nextMonth() {
+        currentMonth++;
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+        generateCalendar(currentMonth, currentYear);
+    }
+
+    generateCalendar(currentMonth, currentYear);
+
+
+</script>
+
+
+
+
+
+
