@@ -5,24 +5,44 @@
 }
 <h1>@ViewData["Title"]</h1>
 
-<form method="post">
+<form method="post" id="appointmentForm">
     <div class="form-group">
-        <select class="form-control" id="DoctorId" onchange="document.getElementById('selectedDoctor').value = this.value; updateAppointments(this.value);" asp-items="@Model.DoctorList" ></select>
+        <select id="DoctorId" class="form-control"
+                asp-items="@Model.DoctorList"
+                onchange="document.getElementById('selectedDoctor').value = this.value; updateAppointments(this.value);">
+        </select>
     </div>
+
     <div class="form-group">
         <div id="Date" class="btn-group" role="group">
-            @for (var i = 0; i < 7; i++)
+            @{
+                int daysToShow = Model.DaysToShow;
+            }
+            @for (var i = 0; i < daysToShow; i++)
             {
+                var date = DateTime.Now.AddDays(i);
                 <div class="date-container">
-                    <p>@DateTime.Now.AddDays(i).ToString("dd MMMM yyyy")</p>
+                    <p>@date.ToString("dd MMMM yyyy")</p>
                     <div class="time-container">
                         @for (var hour = 8; hour <= 17; hour++)
                         {
-                            var date = DateTime.Now.AddDays(i);
                             var dateTime = new DateTime(date.Year, date.Month, date.Day, hour, 0, 0);
-                            if (Model.ReservedAppointments.All(a => a.DateTimeMilli != new DateTimeOffset(dateTime).ToUnixTimeMilliseconds()))
+                            var unixTime = new DateTimeOffset(dateTime).ToUnixTimeMilliseconds();
+                            var isReserved = Model.ReservedAppointments
+                                .Any(a => a.IsConfirmed != -1 && a.DateTimeMilli == unixTime);
+
+                            if (hour == 12)
                             {
-                                <button type="submit" class="btn btn-outline-primary" onclick="selectDateTime('@DateOnly.FromDateTime(date)', '@hour:00')">@hour:00</button>
+                                <button type="button" class="btn btn-outline-secondary" disabled>@hour:00</button>
+                            }
+                            else if (!isReserved)
+                            {
+                                <button type="submit"
+                                        class="btn btn-outline-primary reserve-btn"
+                                        data-date="@date.ToString("yyyy-MM-dd")"
+                                        data-time="@hour:00">
+                                    @hour:00
+                                </button>
                             }
                             else
                             {
@@ -33,15 +53,28 @@
                 </div>
             }
         </div>
-        <input type="hidden" id="selectedDate" name="selectedDate"/>
-        <input type="hidden" id="selectedTime" name="selectedTime"/>
-        <input type="hidden" id="selectedDoctor" name="selectedDoctor" value="@Model.DoctorId"/></div>
+
+        <input type="hidden" id="selectedDate" name="selectedDate" />
+        <input type="hidden" id="selectedTime" name="selectedTime" />
+        <input type="hidden" id="selectedDoctor" name="selectedDoctor" value="@Model.DoctorId" />
+    </div>
 </form>
+
+<form method="get" style="margin-top: 1rem;">
+    <input type="hidden" name="doctorId" value="@Model.DoctorId" />
+    <input type="hidden" name="DaysToShow" value="@(Model.DaysToShow + 7)" />
+    <button type="submit" class="btn btn-outline-primary">Show more days</button>
+</form>
+
 <script>
-    function selectDateTime(date, time) {
-        document.getElementById('selectedDate').value = date;
-        document.getElementById('selectedTime').value = time;
-    }
+    document.querySelectorAll(".reserve-btn").forEach(button => {
+        button.addEventListener("click", function (e) {
+            e.preventDefault();
+            document.getElementById("selectedDate").value = this.dataset.date;
+            document.getElementById("selectedTime").value = this.dataset.time;
+            document.getElementById("appointmentForm").submit();
+        });
+    });
 
     function updateAppointments(doctorId) {
         fetch(`/Patient/Book/UpdateAppointments?doctorId=${doctorId}`)

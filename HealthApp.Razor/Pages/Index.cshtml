@@ -1,10 +1,65 @@
 ﻿@page
 @model IndexModel
+@using System.Security.Claims
+@inject SignInManager<IdentityUser> SignInManager
+
 @{
     ViewData["Title"] = "Home page";
+
+    var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
+    var userName = User.Identity?.Name ?? "";
 }
 
-<div class="">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-5" style="color: #f8f9fa;">
+    <div class="text-center mb-4">
+        <h1 class="display-4 text-light">Welcome to <strong>Doctolib</strong></h1>
+        <p class="lead text-secondary">Your one-stop solution for managing appointments and health records.</p>
+    </div>
+
+    @if (isAuthenticated)
+    {
+        <div class="section text-dark text-center">
+            <h5 class="mb-2" style="color: white;">Hello, <strong>@userName</strong></h5>
+            <p class="mb-0">What would you like to do today?</p>
+        </div>
+
+        <div class="row justify-content-center mt-4">
+            @if (User.IsInRole("Patient"))
+            {
+                <div class="col-md-4 mb-3">
+                    <a href="/Patient" class="btn btn-light btn-lg w-100 border-light">
+                        View My Appointments
+                    </a>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <a href="/Patient/Book" class="btn btn-success btn-lg w-100">
+                        Book a New Appointment
+                    </a>
+                </div>
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                <div class="col-md-4 mb-3">
+                    <a href="/Doctor" class="btn btn-info btn-lg w-100">
+                        View My Schedule
+                    </a>
+                </div>
+            }
+            else if (User.IsInRole("Admin"))
+            {
+                <div class="col-md-4 mb-3">
+                    <a href="/Admin/Index" class="btn btn-warning btn-lg w-100 text-dark">
+                        Admin Dashboard
+                    </a>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center mt-5">
+            <a href="/Identity/Account/Login" class="btn btn-primary btn-lg me-3">Login</a>
+            <a href="/Identity/Account/Register" class="btn btn-light btn-lg">Register</a>
+        </div>
+    }
 </div>

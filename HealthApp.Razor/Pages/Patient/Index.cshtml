@@ -1,28 +1,41 @@
 ﻿@page
-@using System.Globalization
 @model PatientModel
 @{
     ViewData["Title"] = "Your appointments";
 }
-<h1>@ViewData["Title"]</h1>
+<h1 style="text-align: center;">@ViewData["Title"]</h1>
 
-<div class="appointments">
-    @if (Model.ReservedAppointments.Count == 0)
+<div class="appointments-container" style="display: flex; flex-direction: column; align-items: center; margin-top: 2rem;">
+    @if (!Model.ReservedAppointments.Any(a => a.IsConfirmed != -1))
     {
-        <p>You don't have any appointments yet.</p>
+        <p style="color: #ccc;">You don't have any appointments yet.</p>
     }
     else
     {
-        @foreach (var appointment in Model.ReservedAppointments)
+        @foreach (var appointment in Model.ReservedAppointments.Where(a => a.IsConfirmed != -1))
         {
-            <div class="appointment">
-                <div class="appointment-name">
-                    <p class="appointment_date">@DateTimeOffset.FromUnixTimeMilliseconds(appointment.DateTimeMilli).ToString("dd/MM/yyyy HH:mm")</p>
-                    <p class="appointment_doctor">with <span>@Model.GetDoctorName(appointment.DoctorId)</span></p>
+            <div class="appointment"
+                 style="background-color: @Model.GetAppointmentColor(appointment.IsConfirmed);
+                        padding: 1rem;
+                        margin-bottom: 1rem;
+                        border-radius: 5px;
+                        width: 100%;
+                        max-width: 600px;
+                        box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+                <div class="appointment-name" style="margin-bottom: 0.5rem;">
+                    <p class="appointment_date" style="margin: 0; font-weight: bold;">
+                        @DateTimeOffset.FromUnixTimeMilliseconds(appointment.DateTimeMilli).ToString("dd/MM/yyyy HH:mm")
+                    </p>
+                    <p class="appointment_doctor" style="margin: 0; font-size: 0.95rem;">
+                        with <span>@Model.GetDoctorName(appointment.DoctorId)</span>
+                    </p>
                 </div>
-                <form method="post" asp-page-handler="CancelAppointment" asp-route-appointmentId="@appointment.Id">
-                    <button class="btn btn-danger" type="submit">Cancel</button>
+                <form method="post" asp-page-handler="CancelAppointment" style="margin-top: 0.5rem;">
                     <input type="hidden" name="selectedAppointmentId" value="@appointment.Id" />
+                    <button type="submit"
+                            style="background-color: #dc3545; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">
+                        Cancel
+                    </button>
                 </form>
             </div>
         }

@@ -137,14 +137,6 @@ form {
   border: 1px solid var(--secondary-color);
 }
 
-.appointments {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  gap: 10px;
-}
-
 .appointment {
   display: flex;
   justify-content: space-between;
@@ -170,4 +162,11 @@ form {
 
 .appointment-name p {
   margin-bottom: 0;
+}
+
+.section {
+  background: var(--secondary-background-color);
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid var(--secondary-color);
 }

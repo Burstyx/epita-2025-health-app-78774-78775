@@ -1,0 +1,43 @@
+﻿@page
+@model AdminModel
+@{
+    ViewData["Title"] = "Admin dashboard";
+}
+<h1>@ViewData["Title"]</h1>
+
+<div class="admin-dashboard d-flex gap-3">
+    <div class="user-roles section flex-fill d-flex flex-column align-items-center">
+        <h2>Roles</h2>
+        <form method="post" asp-page-handler="SaveUserRoles" class="w-100">
+            @foreach (var user in Model.Users)
+            {
+                <div class="user-role mb-2">
+                    <span>@user.UserName</span>
+                    <select class="form-control" asp-for="UserRoles[user.Id]" asp-items="Model.RoleSelectList"></select>
+                </div>
+            }
+            <button class="btn btn-primary mt-3" type="submit">Save</button>
+        </form>
+    </div>
+
+    <div class="appointments section flex-fill d-flex flex-column align-items-center">
+        <h2>Appointments</h2>
+        @foreach (var appointment in Model.Appointments)
+        {
+            <div class="appointment p-3 mb-3 text-white rounded"
+                 style="background-color: @Model.GetAppointmentColor(appointment.IsConfirmed);">
+                <div class="d-flex flex-column">
+                    <span>Appointment with @Model.GetDoctorName(appointment.DoctorId)</span>
+                    <small class="text-light">
+                        Booked by @Model.GetPatientName(appointment.UserId)
+                        for @DateTimeOffset.FromUnixTimeMilliseconds(appointment.DateTimeMilli).ToString("dd/MM/yyyy HH:mm")
+                    </small>
+                </div>
+                <form method="post" asp-page-handler="DeleteAppointment" class="mt-2">
+                    <input type="hidden" name="id" value="@appointment.Id" />
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+            </div>
+        }
+    </div>
+</div>

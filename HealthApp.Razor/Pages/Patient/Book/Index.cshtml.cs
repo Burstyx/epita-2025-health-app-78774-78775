@@ -6,36 +6,40 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace HealthApp.Razor.Pages.Patient.Book;
-
-public class PatientBookModel : PageModel
+namespace HealthApp.Razor.Pages.Patient.Book
 {
-    private readonly ApplicationDbContext _context;
-    private List<IdentityUser> Doctors { get; set; }
-
-    [BindProperty(SupportsGet = true)] public string? DoctorId { get; set; }
-    public List<Appointment> ReservedAppointments { get; set; }
-    public Appointment Appointment { get; set; }
-    public List<SelectListItem> DoctorList { get; set; }
-
-    public PatientBookModel(ApplicationDbContext context)
+    public class PatientBookModel : PageModel
     {
-        _context = context;
-    }
+        private readonly ApplicationDbContext _context;
+        private List<IdentityUser> Doctors { get; set; }
 
-    public void OnGet()
-    {
-        Doctors = _context.Users.Where(u => _context.UserRoles.Any(ur => ur.UserId == u.Id && ur.RoleId == "2")).ToList();
-        if(DoctorId == null) DoctorId = Doctors.FirstOrDefault()?.Id ?? "";
-        ReservedAppointments = _context.Appointments.Where(a => a.DoctorId == DoctorId).ToList();
-        
-        DoctorList = Doctors.Select(d => new SelectListItem
+        [BindProperty(SupportsGet = true)] public string? DoctorId { get; set; }
+        [BindProperty(SupportsGet = true)] public int DaysToShow { get; set; } = 7;
+
+        public List<Appointment> ReservedAppointments { get; set; }
+        public List<SelectListItem> DoctorList { get; set; }
+
+        [BindProperty] public string selectedDate { get; set; }
+        [BindProperty] public string selectedTime { get; set; }
+        [BindProperty] public string selectedDoctor { get; set; }
+
+        public Appointment Appointment { get; set; }
+
+        public PatientBookModel(ApplicationDbContext context)
         {
-            Value = d.Id.ToString(),
-            Text = d.UserName,
-            Selected = DoctorId == d.Id.ToString()
-        }).ToList();
-    }
+            _context = context;
+        }
+
+        public void OnGet()
+        {
+            if (DaysToShow < 7) DaysToShow = 7;
+            LoadData();
+        }
+
+        public IActionResult OnPost()
+        {
+            if (DaysToShow < 7) DaysToShow = 7;
+            LoadData();
 
     public IActionResult OnPost(string selectedDate, string selectedTime, string selectedDoctor)
     {
@@ -45,21 +49,45 @@ public class PatientBookModel : PageModel
         
         Appointment = new Appointment
         {
-            IsConfirmed = 0,
+            IsConfirmed = false,
             UserId = userId,
             DoctorId = selectedDoctor,
             DateTimeMilli = new DateTimeOffset(DateTime.ParseExact($"{selectedDate} {selectedTime}", "dd/MM/yyyy H:mm", CultureInfo.InvariantCulture, DateTimeStyles.None)).ToUnixTimeMilliseconds(),
         };
 
-        _context.Appointments.Add(Appointment);
-        _context.SaveChanges();
+            _context.Appointments.Add(Appointment);
+            _context.SaveChanges();
 
-        return RedirectToPage("/Patient/Index");
-    }
-    
-    public IActionResult OnGetUpdateAppointments(string doctorId)
-    {
-        ReservedAppointments = _context.Appointments.Where(a => a.DoctorId == doctorId).ToList();
-        return new JsonResult(ReservedAppointments);
+            return RedirectToPage("/Patient/Index");
+        }
+
+        public IActionResult OnGetUpdateAppointments(string doctorId)
+        {
+            ReservedAppointments = _context.Appointments
+                .Where(a => a.DoctorId == doctorId)
+                .ToList();
+
+            return new JsonResult(ReservedAppointments);
+        }
+
+        private void LoadData()
+        {
+            Doctors = _context.Users
+                .Where(u => _context.UserRoles.Any(ur => ur.UserId == u.Id && ur.RoleId == "1"))
+                .ToList();
+
+            DoctorId ??= Doctors.FirstOrDefault()?.Id ?? "";
+
+            ReservedAppointments = _context.Appointments
+                .Where(a => a.DoctorId == DoctorId)
+                .ToList();
+
+            DoctorList = Doctors.Select(d => new SelectListItem
+            {
+                Value = d.Id,
+                Text = d.UserName,
+                Selected = DoctorId == d.Id
+            }).ToList();
+        }
     }
 }
