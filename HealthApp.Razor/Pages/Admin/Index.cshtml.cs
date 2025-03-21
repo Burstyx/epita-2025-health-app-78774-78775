@@ -82,4 +82,9 @@ public class AdminModel : PageModel
     {
         return _context.Users.Find(patientId)?.UserName ?? patientId;
     }
+    
+    public string GetAppointmentColor(int isConfirmed)
+    {
+        return isConfirmed == 1 ? "green" : isConfirmed == 0 ? "orange" : "red";
+    }
 }

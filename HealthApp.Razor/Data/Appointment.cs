@@ -6,5 +6,5 @@ public class Appointment
     public string UserId { get; set; }
     public string DoctorId { get; set; }
     public long DateTimeMilli { get; set; }
-    public bool IsConfirmed { get; set; }
+    public int IsConfirmed { get; set; }
 }
