@@ -5,39 +5,70 @@
 }
 <h1>@ViewData["Title"]</h1>
 
-<div class="admin-dashboard d-flex gap-3">
-    <div class="user-roles section flex-fill d-flex flex-column align-items-center">
+<div class="mb-4">
+    <input type="text" id="globalSearch" placeholder="Rechercher un utilisateur ou un rendez-vous..." class="form-control w-50 mx-auto" />
+</div>
+
+<div class="admin-dashboard d-flex gap-3 align-items-stretch">
+    <div class="user-roles section d-flex flex-column align-items-center" style="flex: 1; min-height: 100%;">
         <h2>Roles</h2>
-        <form method="post" asp-page-handler="SaveUserRoles" class="w-100">
-            @foreach (var user in Model.Users)
-            {
-                <div class="user-role mb-2">
-                    <span>@user.UserName</span>
-                    <select class="form-control" asp-for="UserRoles[user.Id]" asp-items="Model.RoleSelectList"></select>
-                </div>
-            }
+        <form method="post" asp-page-handler="SaveUserRoles" class="w-100 h-100">
+            <div id="userList">
+                @foreach (var user in Model.Users)
+                {
+                    <div class="user-role mb-2" data-username="@user.UserName.ToLower()">
+                        <span>@user.UserName</span>
+                        <select class="form-control" asp-for="UserRoles[user.Id]" asp-items="Model.RoleSelectList"></select>
+                    </div>
+                }
+            </div>
             <button class="btn btn-primary mt-3" type="submit">Save</button>
         </form>
     </div>
 
-    <div class="appointments section flex-fill d-flex flex-column align-items-center">
+    <div class="appointments section d-flex flex-column align-items-center" style="flex: 1; min-height: 100%;">
         <h2>Appointments</h2>
-        @foreach (var appointment in Model.Appointments)
-        {
-            <div class="appointment p-3 mb-3 text-white rounded"
-                 style="background-color: @Model.GetAppointmentColor(appointment.IsConfirmed);">
-                <div class="d-flex flex-column">
-                    <span>Appointment with @Model.GetDoctorName(appointment.DoctorId)</span>
-                    <small class="text-light">
-                        Booked by @Model.GetPatientName(appointment.UserId)
-                        for @DateTimeOffset.FromUnixTimeMilliseconds(appointment.DateTimeMilli).ToString("dd/MM/yyyy HH:mm")
-                    </small>
+        <div id="appointmentList" class="w-100">
+            @foreach (var appointment in Model.Appointments)
+            {
+                var doctorName = Model.GetDoctorName(appointment.DoctorId);
+                var patientName = Model.GetPatientName(appointment.UserId);
+                <div class="appointment p-3 mb-3 text-white rounded"
+                     data-doctor="@doctorName.ToLower()"
+                     data-patient="@patientName.ToLower()"
+                     style="background-color: @Model.GetAppointmentColor(appointment.IsConfirmed);">
+                    <div class="d-flex flex-column">
+                        <span>Appointment with @doctorName</span>
+                        <small class="text-light">
+                            Booked by @patientName
+                            for @DateTimeOffset.FromUnixTimeMilliseconds(appointment.DateTimeMilli).ToString("dd/MM/yyyy HH:mm")
+                        </small>
+                    </div>
+                    <form method="post" asp-page-handler="DeleteAppointment" class="mt-2">
+                        <input type="hidden" name="id" value="@appointment.Id" />
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
                 </div>
-                <form method="post" asp-page-handler="DeleteAppointment" class="mt-2">
-                    <input type="hidden" name="id" value="@appointment.Id" />
-                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                </form>
-            </div>
-        }
+            }
+        </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        const input = document.getElementById("globalSearch");
+        input.addEventListener("input", () => {
+            const query = input.value.toLowerCase();
+
+            document.querySelectorAll("#userList .user-role").forEach(user => {
+                user.style.display = user.dataset.username.includes(query) || !query ? "" : "none";
+            });
+
+            document.querySelectorAll("#appointmentList .appointment").forEach(app => {
+                const doctor = app.dataset.doctor;
+                const patient = app.dataset.patient;
+                app.style.display = doctor.includes(query) || patient.includes(query) || !query ? "" : "none";
+            });
+        });
+    </script>
+}
