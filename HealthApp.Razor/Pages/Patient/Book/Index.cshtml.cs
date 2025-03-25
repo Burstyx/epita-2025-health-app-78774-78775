@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Security.Claims;
 using HealthApp.Razor.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace HealthApp.Razor.Pages.Patient.Book
 {
+    [Authorize(Roles = "Patient")]
     public class PatientBookModel : PageModel
     {
         private readonly ApplicationDbContext _context;

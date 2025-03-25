@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace HealthApp.Razor.Pages.Doctor
 {
+    [Authorize(Roles = "Doctor")]
     public class ConfirmationModel : PageModel
     {
         private readonly ApplicationDbContext _context;
@@ -30,7 +31,7 @@ namespace HealthApp.Razor.Pages.Doctor
             string? doctorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(doctorId))
             {
-                Console.WriteLine("? Médecin non connecté !");
+                Console.WriteLine("? Mï¿½decin non connectï¿½ !");
                 return;
             }
 
@@ -45,7 +46,7 @@ namespace HealthApp.Razor.Pages.Doctor
 
             if (appointment == null)
             {
-                return NotFound("Rendez-vous non trouvé.");
+                return NotFound("Rendez-vous non trouvï¿½.");
             }
 
             string? doctorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -69,13 +70,13 @@ namespace HealthApp.Razor.Pages.Doctor
         {
             var appointment = await _context.Appointments.FindAsync(appointmentId);
             if (appointment == null)
-                return NotFound("Rendez-vous non trouvé.");
+                return NotFound("Rendez-vous non trouvï¿½.");
 
             string? doctorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (appointment.DoctorId != doctorId)
                 return Unauthorized("Vous ne pouvez annuler que vos propres rendez-vous.");
 
-            appointment.IsConfirmed = -1; // ? Rendez-vous annulé
+            appointment.IsConfirmed = -1; // ? Rendez-vous annulï¿½
             await _context.SaveChangesAsync();
             return RedirectToPage();
         }
