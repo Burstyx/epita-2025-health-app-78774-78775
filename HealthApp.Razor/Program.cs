@@ -3,9 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using HealthApp.Razor.Data;
 
 var builder = WebApplication.CreateBuilder(args);
-// Ajouter le service Identity avec UserManager et RoleManager
 
-// Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
                        throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -35,8 +33,12 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+
 app.UseRouting();
 app.MapControllers();
+
+app.UseAuthentication();
+app.UseMiddleware<AssignRoleMiddleware>();
 
 app.UseAuthorization();
 
