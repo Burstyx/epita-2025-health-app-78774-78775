@@ -44,8 +44,7 @@
 <script>
     let currentMonth = new Date().getMonth();
     let currentYear = new Date().getFullYear();
-
-    // 🎯 Injecter les événements directement depuis le backend
+    
     let events = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Events));
     
 
@@ -69,7 +68,7 @@
 
                 if (i === 0 && j < firstDay) {
                     cell.innerHTML = "";
-                    cell.classList.add("empty-cell"); // ✅ Stylisation des cases vides
+                    cell.classList.add("empty-cell");
                 } else if (date > daysInMonth) {
                     break;
                 } else {
@@ -85,8 +84,7 @@
                     cell.dataset.date = formattedDate;
                     cell.appendChild(cellContent);
                     cell.appendChild(eventContainer);
-
-                    // ✅ Ajout de la classe `.today` si c'est la date actuelle
+                    
                     if (formattedDate === todayFormatted) {
                         cell.classList.add("today");
                     }
@@ -107,7 +105,7 @@
 
         events.forEach(event => {
             if (event.IsConfirmed === -1) {
-                return; // 🚀 Ne pas afficher les événements annulés
+                return;
             }
 
             let date = event.start.split("T")[0];
@@ -122,12 +120,11 @@
                     eventDiv.style.backgroundColor = event.color;
                     eventDiv.dataset.eventId = event.id;
                     eventDiv.dataset.eventDate = date;
-                    eventDiv.dataset.eventTime = event.start.split("T")[1]; // Extraire l'heure
+                    eventDiv.dataset.eventTime = event.start.split("T")[1];
                     eventDiv.dataset.eventPatient = event.title;
                     
                     eventDiv.dataset.eventStatus = event.IsConfirmed == 1 ? "Confirmed" : event.IsConfirmed == -1 ? "Refused" : "Pending";
 
-                    // ✅ Ajouter un événement "click" pour ouvrir la pop-up
                     eventDiv.onclick = function () {
 
                         openModal(this.dataset);
@@ -139,7 +136,6 @@
         });
     }
 
-    // ✅ Fonction pour ouvrir la pop-up avec les détails du rendez-vous
     function openModal(eventData) {
         document.getElementById("eventDate").textContent = eventData.eventDate;
         document.getElementById("eventTime").textContent = eventData.eventTime;
@@ -148,7 +144,6 @@
         document.getElementById("eventModal").style.display = "block";
     }
 
-    // ✅ Fonction pour fermer la pop-up
     function closeModal() {
         document.getElementById("eventModal").style.display = "none";
     }

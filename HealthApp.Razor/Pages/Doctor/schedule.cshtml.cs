@@ -11,7 +11,7 @@ using System.Security.Claims;
 
 namespace HealthApp.Razor.Pages.Doctor
 {
-    [Authorize(Roles = "Doctor")] // S'assurer que seuls les médecins peuvent voir cette page
+    [Authorize(Roles = "Doctor")]
     public class scheduleModel : PageModel
     {
         private readonly ApplicationDbContext _context;
@@ -25,17 +25,15 @@ namespace HealthApp.Razor.Pages.Doctor
 
         public void OnGet()
         {
-            Console.WriteLine("?? OnGet() de Schedule.cshtml.cs a été appelé !");
+            Console.WriteLine("?? OnGet() de Schedule.cshtml.cs a ï¿½tï¿½ appelï¿½ !");
 
-            // ?? Récupérer l'ID du médecin connecté
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
             {
-                Console.WriteLine("? Utilisateur non connecté !");
+                Console.WriteLine("? Utilisateur non connectï¿½ !");
                 return;
             }
 
-            // ?? Récupérer les rendez-vous du médecin connecté
             Events = _context.Appointments
                 .Where(a => a.DoctorId == userId)
                 .Select(a => new Dictionary<string, object>
@@ -49,7 +47,7 @@ namespace HealthApp.Razor.Pages.Doctor
                 })
                 .ToList();
 
-            Console.WriteLine($"?? {Events.Count} événements trouvés pour le médecin {userId}");
+            Console.WriteLine($"?? {Events.Count} ï¿½vï¿½nements trouvï¿½s pour le mï¿½decin {userId}");
         }
     }
 }
